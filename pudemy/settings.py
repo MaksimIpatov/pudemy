@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     "lms.apps.LmsConfig",
     "users.apps.UsersConfig",
     "api.apps.ApiConfig",
+    "payments.apps.PaymentsConfig",
 ]
 
 MIDDLEWARE = [

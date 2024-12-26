@@ -7,6 +7,11 @@ from api.views import (
     LessonListAPIView,
     LessonRetrieveAPIView,
     LessonUpdateAPIView,
+    PaymentCreateAPIView,
+    PaymentDestroyAPIView,
+    PaymentListAPIView,
+    PaymentRetrieveAPIView,
+    PaymentUpdateAPIView,
 )
 from api.viewsets import CourseViewSet, UserProfileViewSet
 
@@ -40,5 +45,30 @@ urlpatterns = [
         "lessons/<int:pk>/delete/",
         LessonDestroyAPIView.as_view(),
         name="lesson-delete",
+    ),
+    path(
+        "payments/",
+        PaymentListAPIView.as_view(),
+        name="payment-list",
+    ),
+    path(
+        "payments/create/",
+        PaymentCreateAPIView.as_view(),
+        name="payment-create",
+    ),
+    path(
+        "payments/<int:pk>/",
+        PaymentRetrieveAPIView.as_view(),
+        name="payment-retrieve",
+    ),
+    path(
+        "payments/<int:pk>/edit/",
+        PaymentUpdateAPIView.as_view(),
+        name="payment-update",
+    ),
+    path(
+        "payments/<int:pk>/delete/",
+        PaymentDestroyAPIView.as_view(),
+        name="payment-delete",
     ),
 ]

@@ -8,7 +8,6 @@ from users.models import User
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    # http_method_names = ["put", "get", "patch"]
 
     def get_object(self):
         return self.request.user
