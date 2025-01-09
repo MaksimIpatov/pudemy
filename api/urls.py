@@ -1,6 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
+from api.apps import ApiConfig
 from api.views import (
     LessonCreateAPIView,
     LessonDestroyAPIView,
@@ -13,11 +14,12 @@ from api.views import (
     PaymentRetrieveAPIView,
     PaymentUpdateAPIView,
 )
-from api.viewsets import CourseViewSet, UserProfileViewSet
+from api.viewsets import CourseViewSet
+
+app_name = ApiConfig.name
 
 router = DefaultRouter()
 router.register(r"courses", CourseViewSet, basename="course")
-router.register(r"profile", UserProfileViewSet, basename="profile")
 
 urlpatterns = [
     path("", include(router.urls)),

@@ -1,6 +1,7 @@
 from django.db import models
 
 from lms.constants import TITLE_LEN
+from users.models import User
 
 
 class Course(models.Model):
@@ -14,6 +15,12 @@ class Course(models.Model):
     preview = models.ImageField(
         "Превью",
         upload_to="courses/previews/",
+    )
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="courses",
+        verbose_name="Владелец",
     )
 
     class Meta:
@@ -44,6 +51,12 @@ class Lesson(models.Model):
         related_name="lessons",
         on_delete=models.CASCADE,
         verbose_name="Курс",
+    )
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="lessons",
+        verbose_name="Владелец",
     )
 
     class Meta:
