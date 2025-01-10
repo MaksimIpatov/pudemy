@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from lms.models import Course, Lesson
+from api.validators import VideoUrlValidator
+from lms.models import Course, CourseSubscription, Lesson
 from payments.models import Payment
 from users.models import User
 
@@ -53,13 +54,18 @@ class LessonSerializer(serializers.ModelSerializer):
             "preview",
             "video_url",
             "course",
+            "owner",
         )
-        read_only_fields = ("id",)
+        read_only_fields = ("id", "owner")
+        validators = [
+            VideoUrlValidator(field="video_url"),
+        ]
 
 
 class CourseSerializer(serializers.ModelSerializer):
     lessons = LessonSerializer(many=True, read_only=True)
     lesson_count = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
@@ -70,7 +76,14 @@ class CourseSerializer(serializers.ModelSerializer):
             "preview",
             "lessons",
             "lesson_count",
+            "is_subscribed",
         )
 
     def get_lesson_count(self, obj):
         return obj.lessons.count()
+
+    def get_is_subscribed(self, obj):
+        return CourseSubscription.objects.filter(
+            user=self.context.get("request").user,
+            course=obj,
+        ).exists()

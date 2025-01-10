@@ -104,6 +104,13 @@ AUTH_USER_MODEL = "users.User"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+PAGE_SIZE = 25
+COURSE_PAGE_SIZE = 10
+LESSON_PAGE_SIZE = 15
+MAX_PAGE_SIZE = 100
+PAGE_SIZE_QUERY_PARAM = "page_size"
+
+
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": (
         "django_filters.rest_framework.DjangoFilterBackend",
@@ -112,6 +119,8 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
+    "DEFAULT_PAGINATION_CLASS": "api.pagination.DefaultPagination",
+    "PAGE_SIZE": PAGE_SIZE,
 }
 
 SIMPLE_JWT = {

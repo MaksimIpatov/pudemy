@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from api.apps import ApiConfig
 from api.views import (
+    CourseSubscriptionAPIView,
     LessonCreateAPIView,
     LessonDestroyAPIView,
     LessonListAPIView,
@@ -22,6 +23,11 @@ router = DefaultRouter()
 router.register(r"courses", CourseViewSet, basename="course")
 
 urlpatterns = [
+    path(
+        "courses/subscribe/",
+        CourseSubscriptionAPIView.as_view(),
+        name="course-subscribe",
+    ),
     path("", include(router.urls)),
     path(
         "lessons/",
