@@ -1,5 +1,6 @@
+import stripe
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status
+from rest_framework import serializers, status
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import (
     CreateAPIView,
@@ -15,6 +16,7 @@ from rest_framework.views import APIView
 from api.pagination import LessonPagination
 from api.permissions import IsModerator, IsOwner, IsOwnerOrModerator
 from api.serializers import LessonSerializer, PaymentSerializer
+from api.utils import StripeService
 from lms.models import Course, CourseSubscription, Lesson
 from payments.models import Payment
 
@@ -68,6 +70,26 @@ class PaymentCreateAPIView(CreateAPIView):
     serializer_class = PaymentSerializer
     permission_classes = (IsAuthenticated,)
 
+    def perform_create(self, serializer):
+        course = serializer.validated_data.get("course")
+        payment = serializer.save(user=self.request.user)
+        stripe_service = StripeService()
+        try:
+            price = stripe_service.create_price(
+                amount=payment.amount,
+                product_name=course.title,
+            )
+            session = stripe_service.create_session(
+                price_id=price["id"],
+                success_url="http://127.0.0.1:8000/api/cources/",
+                cancel_url="http://127.0.0.1:8000/api/cources/",
+            )
+            payment.stripe_session_id = session["id"]
+            payment.save()
+        except Exception as err:
+            payment.delete()
+            raise serializers.ValidationError({"detail": str(err)})
+
 
 class PaymentRetrieveAPIView(RetrieveAPIView):
     queryset = Payment.objects.all()
@@ -85,6 +107,36 @@ class PaymentDestroyAPIView(DestroyAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     permission_classes = (IsAuthenticated,)
+
+
+class PaymentStatusAPIView(APIView):
+    """Проверка статуса платежной сессии."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, session_id):
+        try:
+            session = StripeService.retrieve_session(session_id)
+            return Response(
+                {
+                    "id": session.get("id"),
+                    "payment_status": session.get("payment_status"),
+                    "amount_total": session.get("amount_total"),
+                    "currency": session.get("currency"),
+                    "customer_email": session.get("customer_email"),
+                },
+                status=status.HTTP_200_OK,
+            )
+        except stripe.error.InvalidRequestError as err:
+            return Response(
+                {"detail": err},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as err:
+            return Response(
+                {"detail": "Произошла ошибка при получении статуса платежа."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
 
 class CourseSubscriptionAPIView(APIView):

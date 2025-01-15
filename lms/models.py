@@ -23,6 +23,10 @@ class Course(models.Model):
         related_name="courses",
         verbose_name="Владелец",
     )
+    price = models.IntegerField(
+        "Стоимость курса",
+        default=100_000,
+    )
 
     class Meta:
         verbose_name = "Курс"

@@ -41,6 +41,12 @@ class Payment(models.Model):
         max_length=10,
         choices=tuple(PAYMENT_METHODS.items()),
     )
+    stripe_session_id = models.CharField(
+        "ID сессии",
+        max_length=255,
+        **NULL_BLANK_TRUE,
+        help_text="ID платежной сессии в Stripe",
+    )
 
     class Meta:
         verbose_name = "Платеж"

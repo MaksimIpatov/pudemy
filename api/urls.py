@@ -13,6 +13,7 @@ from api.views import (
     PaymentDestroyAPIView,
     PaymentListAPIView,
     PaymentRetrieveAPIView,
+    PaymentStatusAPIView,
     PaymentUpdateAPIView,
 )
 from api.viewsets import CourseViewSet
@@ -78,5 +79,10 @@ urlpatterns = [
         "payments/<int:pk>/delete/",
         PaymentDestroyAPIView.as_view(),
         name="payment-delete",
+    ),
+    path(
+        "payments/status/<str:session_id>/",
+        PaymentStatusAPIView.as_view(),
+        name="payment-status",
     ),
 ]
