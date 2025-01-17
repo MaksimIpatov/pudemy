@@ -65,6 +65,10 @@ class Lesson(models.Model):
         related_name="lessons",
         verbose_name="Владелец",
     )
+    updated_at = models.DateTimeField(
+        "Последнее обновление",
+        auto_now=True,
+    )
 
     class Meta:
         verbose_name = "Урок"

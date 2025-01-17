@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 import stripe
+from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import serializers, status
 from rest_framework.filters import OrderingFilter
@@ -13,9 +16,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from api.constants import COURSE_NOTIFICATION_COOLDOWN_HOURS
 from api.pagination import LessonPagination
 from api.permissions import IsModerator, IsOwner, IsOwnerOrModerator
 from api.serializers import LessonSerializer, PaymentSerializer
+from api.tasks import send_course_update_notification
 from api.utils import StripeService
 from lms.models import Course, CourseSubscription, Lesson
 from payments.models import Payment
@@ -47,6 +52,16 @@ class LessonUpdateAPIView(UpdateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = (IsAuthenticated, IsModerator | IsOwner)
+
+    def perform_update(self, serializer):
+        lesson = serializer.save()
+        course = lesson.course
+        last_update = course.lessons.order_by("-updated_at").first()
+
+        if not last_update or (
+            timezone.now() - last_update.updated_at
+        ) > timedelta(hours=COURSE_NOTIFICATION_COOLDOWN_HOURS):
+            send_course_update_notification.delay(course.id, lesson.title)
 
 
 class LessonDestroyAPIView(DestroyAPIView):

@@ -118,4 +118,19 @@ coverage report
 
 ---
 
+## Запуск фоновых задач
+
+Запустить задачи Celery:
+
+```bash
+celery -A pudemy worker -l INFO
+```
+
+Запустить периодические задачи Celery:
+
+```bash
+celery -A pudemy beat -l INFO
+```
+
+
 > Все задания и требования для проекта описаны в файле [TASKS.md](TASKS.md).

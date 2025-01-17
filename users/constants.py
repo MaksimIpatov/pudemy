@@ -6,3 +6,5 @@ NULL_BLANK_TRUE: dict[str, bool] = {
     "null": True,
     "blank": True,
 }
+
+DEACTIVATE_ACCOUNTS_NUM_OF_DAYS: int = 30
