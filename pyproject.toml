@@ -33,7 +33,7 @@ isort = "^5.13.2"
 black = "^24.8.0"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.6"]
 build-backend = "poetry.core.masonry.api"
 
 max-complexity = 10
