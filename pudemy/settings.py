@@ -64,10 +64,10 @@ WSGI_APPLICATION = "pudemy.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME", "test_db"),
-        "USER": os.getenv("DB_USER", "test_user"),
-        "PASSWORD": os.getenv("DB_PASSWORD", "test_user"),
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.getenv("POSTGRES_DB", "test_db"),
+        "USER": os.getenv("POSTGRES_USER", "test_user"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "test_user"),
         "HOST": os.getenv("DB_HOST", ""),
         "PORT": os.getenv("DB_PORT", 5432),
     },
