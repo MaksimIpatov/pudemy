@@ -73,6 +73,34 @@
 
 ---
 
+## Как запустить контейнер
+
+1. Создайте файл `.env` и добавьте туда необходимые параметры из `.env.sample`:
+
+```shell
+cp .env.sample .env
+```
+
+2. Запустите контейнеры:
+
+```shell
+sudo docker compose up --build -d
+```
+
+3. Примените миграции:
+
+```shell
+sudo docker compose exec pudemy python manage.py migrate
+```
+
+4. Создайте суперпользователя:
+
+```shell
+sudo docker compose exec pudemy python manage.py createsuperuser
+```
+
+---
+
 ## Эндпоинты API
 
 1. **Курсы:**
@@ -131,6 +159,5 @@ celery -A pudemy worker -l INFO
 ```bash
 celery -A pudemy beat -l INFO
 ```
-
 
 > Все задания и требования для проекта описаны в файле [TASKS.md](TASKS.md).
