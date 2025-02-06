@@ -1,0 +1,11 @@
+.git
+.venv
+.idea
+.README.md
+celerybeat-schedule
+static/
+media/
+tests/
+TASKS.md
+Makefile
+.env.example
