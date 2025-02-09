@@ -18,9 +18,8 @@ services:
     build: .
     tty: true
     command: >
-      bash -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000" \
-      bash -c "celery -A pudemy beat --loglevel=info" \
-      bash -c "celery -A pudemy.celery  worker --loglevel=INFO -B"
+      bash -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
+      
     volumes:
       - .:/app
       - static_volume:/app/static
@@ -37,6 +36,26 @@ services:
       - redis_data:/data
     env_file:
       - .env
+
+  pudemy_celery:
+    build: .
+    command: >
+      bash -c "celery -A pudemy worker -l INFO"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - db
+
+  pudemy_celery_beat:
+    build: .
+    env_file:
+      - .env
+    command: >
+      bash -c "celery -A pudemy beat -l INFO"
+    depends_on:
+      - redis
+      - db
 
 volumes:
   pg_data:
