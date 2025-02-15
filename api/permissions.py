@@ -6,8 +6,7 @@ class IsModerator(BasePermission):
 
     def has_permission(self, request, view):
         return (
-            request.user.is_staff
-            or request.user.groups.filter(name="moderator").exists()
+            request.user.is_staff or request.user.groups.filter(name="moderator").exists()
         )
 
     def has_object_permission(self, request, view, obj):
@@ -26,12 +25,10 @@ class IsOwnerOrModerator(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return (
-            obj.owner == request.user
-            or request.user.groups.filter(name="moderator").exists()
+            obj.owner == request.user or request.user.groups.filter(name="moderator").exists()
         )
 
     def has_permission(self, request, view):
         return (
-            request.user.groups.filter(name="moderator").exists()
-            or request.method in SAFE_METHODS
+            request.user.groups.filter(name="moderator").exists() or request.method in SAFE_METHODS
         )

@@ -59,7 +59,7 @@ class LessonUpdateAPIView(UpdateAPIView):
         last_update = course.lessons.order_by("-updated_at").first()
 
         if not last_update or (
-            timezone.now() - last_update.updated_at
+                timezone.now() - last_update.updated_at
         ) > timedelta(hours=COURSE_NOTIFICATION_COOLDOWN_HOURS):
             send_course_update_notification.delay(course.id, lesson.title)
 
@@ -149,7 +149,8 @@ class PaymentStatusAPIView(APIView):
             )
         except Exception as err:
             return Response(
-                {"detail": "Произошла ошибка при получении статуса платежа."},
+                {"detail": "Произошла ошибка при "
+                           f"получении статуса платежа. {err}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
