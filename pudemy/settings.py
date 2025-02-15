@@ -61,7 +61,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "pudemy.wsgi.application"
 
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -101,8 +100,11 @@ MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 STATIC_URL = "/static/"
-STATIC_FILES_DIRS = [BASE_DIR / "static"]
-# STATIC_ROOT = BASE_DIR / "static"
+
+if DEBUG:
+    STATIC_FILES_DIRS = [BASE_DIR / "static"]
+else:
+    STATIC_ROOT = BASE_DIR / "static"
 
 AUTH_USER_MODEL = "users.User"
 
@@ -113,7 +115,6 @@ COURSE_PAGE_SIZE = 10
 LESSON_PAGE_SIZE = 15
 MAX_PAGE_SIZE = 100
 PAGE_SIZE_QUERY_PARAM = "page_size"
-
 
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": (
