@@ -102,9 +102,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 STATIC_URL = "/static/"
 
 if DEBUG:
-    STATIC_FILES_DIRS = [BASE_DIR / "static"]
+    STATIC_FILES_DIRS = [BASE_DIR / "staticfiles"]
 else:
-    STATIC_ROOT = BASE_DIR / "static"
+    STATIC_ROOT = BASE_DIR / "staticfiles"
 
 AUTH_USER_MODEL = "users.User"
 
@@ -155,4 +155,11 @@ CELERY_BEAT_SCHEDULE = {
         "task": "users.tasks.deactivate_inactive_users",
         "schedule": timedelta(minutes=60),
     },
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": os.getenv("REDIS_URL"),
+    }
 }
