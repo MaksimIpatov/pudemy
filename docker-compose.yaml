@@ -11,7 +11,7 @@ services:
     tty: true
     command: >
       bash -c "python3 manage.py collectstatic --noinput \
-      && python3 manage.py migrate \ 
+      && python3 manage.py migrate \
       && gunicorn pudemy.wsgi:application --bind 0.0.0.0:8000"
 
     volumes:
