@@ -1,34 +1,29 @@
 services:
   db:
     image: postgres:16
-    restart: on-failure
     env_file:
       - .env
-    expose:
-      - "5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD-SHELL", "-c", "pg_isready -u $POSTGRES_USER" ]
-      interval: 10s
-      retries: 5
-      timeout: 5s
 
   pudemy:
     build: .
     tty: true
     command: >
-      bash -c "python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
-      
+      bash -c "python3 manage.py collectstatic --noinput \
+      && python3 manage.py migrate \ 
+      && gunicorn pudemy.wsgi:application --bind 0.0.0.0:8000"
+
     volumes:
-      - .:/app
-      - static_volume:/app/static
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
     ports:
       - "8000:8000"
     env_file:
       - .env
     depends_on:
       - db
+      - redis
 
   redis:
     image: redis:6
@@ -57,7 +52,20 @@ services:
       - redis
       - db
 
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - static_volume:/app/staticfiles
+    depends_on:
+      - pudemy
+
 volumes:
   pg_data:
   redis_data:
   static_volume:
+  media_volume:
